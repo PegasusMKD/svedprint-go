@@ -6,6 +6,7 @@
   *.dylib
   /svedprint-api
   /svedprint
+  bin/
 
   # Test binary, built with `go test -c`
   *.test
@@ -15,9 +16,9 @@
   coverage.out
   coverage.html
 
-  # Generated code
-  db/sqlc/*
-  !db/sqlc/.gitkeep
+  # Generated code (sqlc)
+  internal/*/db/sqlc/*
+  !internal/*/db/sqlc/.gitkeep
 
   # Environment files
   .env

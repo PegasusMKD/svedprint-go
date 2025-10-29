@@ -1,0 +1,11 @@
+version: "2"
+sql:
+  - engine: "postgresql"
+    queries: "db/svedprint/queries"
+    schema: "db/svedprint/migrations"
+    gen:
+      go:
+        package: "sqlc"
+        out: "internal/svedprint/db/sqlc"
+        sql_package: "pgx/v5"
+

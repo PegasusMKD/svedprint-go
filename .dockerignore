@@ -1,0 +1,57 @@
+# Git
+.git
+.gitignore
+.github
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Build artifacts
+bin/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Documentation
+README.md
+*.md
+!CLAUDE.md
+
+# Docker
+docker-compose.yml
+Dockerfile
+.dockerignore
+
+# Testing
+coverage.out
+coverage.html
+*.test
+
+# Temporary files
+tmp/
+temp/
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Scripts (not needed in container)
+scripts/
+Makefile
+
+# Railway config
+railway.json
+railway.toml
