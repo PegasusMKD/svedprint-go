@@ -58,10 +58,11 @@ func (ns NullAcademicLevel) Value() (driver.Value, error) {
 type MigrationStatus string
 
 const (
-	MigrationStatusPending   MigrationStatus = "pending"
-	MigrationStatusRunning   MigrationStatus = "running"
-	MigrationStatusCompleted MigrationStatus = "completed"
-	MigrationStatusFailed    MigrationStatus = "failed"
+	MigrationStatusPending    MigrationStatus = "pending"
+	MigrationStatusInProgress MigrationStatus = "in_progress"
+	MigrationStatusCompleted  MigrationStatus = "completed"
+	MigrationStatusFailed     MigrationStatus = "failed"
+	MigrationStatusRolledBack MigrationStatus = "rolled_back"
 )
 
 func (e *MigrationStatus) Scan(src interface{}) error {

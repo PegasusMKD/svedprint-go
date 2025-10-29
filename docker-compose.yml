@@ -16,7 +16,7 @@ services:
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-postgres}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -57,17 +57,18 @@ services:
       KC_HOSTNAME_STRICT: false
       KC_HTTP_ENABLED: true
       KC_PROXY: edge
+      KC_HEALTH_ENABLED: true
     ports:
       - "8080:8080"
     depends_on:
       postgres:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/health/ready"]
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/localhost/8080 && echo -e 'GET /health/ready HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n' >&3 && timeout 2 cat <&3 | grep -q 'status.*UP' || exit 1"]
       interval: 30s
       timeout: 10s
-      retries: 5
-      start_period: 60s
+      retries: 10
+      start_period: 90s
     networks:
       - svedprint-network
 
@@ -88,6 +89,7 @@ services:
       DATABASE_CONN_MAX_LIFETIME: ${SVEDPRINT_DATABASE_CONN_MAX_LIFETIME:-5m}
       REDIS_ADDR: ${REDIS_ADDR:-redis:6379}
       REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+      SERVICE_NAME: svedprint
       REDIS_DB: ${REDIS_DB:-0}
       REDIS_TTL: ${REDIS_TTL:-10m}
       GIN_MODE: ${GIN_MODE:-debug}
@@ -124,6 +126,7 @@ services:
       DATABASE_MAX_IDLE_CONNS: ${SVEDPRINT_ADMIN_DATABASE_MAX_IDLE_CONNS:-10}
       DATABASE_CONN_MAX_LIFETIME: ${SVEDPRINT_ADMIN_DATABASE_CONN_MAX_LIFETIME:-5m}
       SVEDPRINT_SERVICE_URL: ${SVEDPRINT_SERVICE_URL:-http://svedprint:8001}
+      SERVICE_NAME: svedprint-admin
       GIN_MODE: ${GIN_MODE:-debug}
       LOG_LEVEL: ${LOG_LEVEL:-info}
     ports:
@@ -154,6 +157,7 @@ services:
     environment:
       PORT: ${SVEDPRINT_PRINT_PORT:-8003}
       SVEDPRINT_SERVICE_URL: ${SVEDPRINT_SERVICE_URL:-http://svedprint:8001}
+      SERVICE_NAME: svedprint-print
       GIN_MODE: ${GIN_MODE:-debug}
       LOG_LEVEL: ${LOG_LEVEL:-info}
     ports:
@@ -193,6 +197,7 @@ services:
       SVEDPRINT_SERVICE_URL: ${SVEDPRINT_SERVICE_URL:-http://svedprint:8001}
       SVEDPRINT_ADMIN_SERVICE_URL: ${SVEDPRINT_ADMIN_SERVICE_URL:-http://svedprint-admin:8002}
       SVEDPRINT_PRINT_SERVICE_URL: ${SVEDPRINT_PRINT_SERVICE_URL:-http://svedprint-print:8003}
+      SERVICE_NAME: gateway
       GIN_MODE: ${GIN_MODE:-debug}
       LOG_LEVEL: ${LOG_LEVEL:-info}
     ports:

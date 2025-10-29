@@ -16,7 +16,13 @@
       "Bash(then echo \"bin directory exists\")",
       "Bash(fi)",
       "Bash(then echo \"ERROR: bin still exists\")",
-      "Bash(else echo \"SUCCESS: bin removed\")"
+      "Bash(else echo \"SUCCESS: bin removed\")",
+      "Bash(docker-compose down:*)",
+      "Bash(dos2unix:*)",
+      "Bash(docker-compose up:*)",
+      "Bash(docker logs:*)",
+      "Bash(docker exec:*)",
+      "Bash(docker ps:*)"
     ],
     "deny": [],
     "ask": []
