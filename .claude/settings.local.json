@@ -4,7 +4,19 @@
       "Bash(go version:*)",
       "Bash(tree:*)",
       "Bash(go mod tidy:*)",
-      "Bash(go get:*)"
+      "Bash(go get:*)",
+      "Bash(make dev-setup:*)",
+      "Bash(make help:*)",
+      "Bash(make build-gateway:*)",
+      "Bash(make tidy:*)",
+      "Bash(make sqlc:*)",
+      "Bash(make init-dirs:*)",
+      "Bash(make:*)",
+      "Bash(if [ -d bin ])",
+      "Bash(then echo \"bin directory exists\")",
+      "Bash(fi)",
+      "Bash(then echo \"ERROR: bin still exists\")",
+      "Bash(else echo \"SUCCESS: bin removed\")"
     ],
     "deny": [],
     "ask": []

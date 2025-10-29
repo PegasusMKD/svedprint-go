@@ -46,8 +46,5 @@ RUN chown -R appuser:appuser /app
 # Switch to non-root user
 USER appuser
 
-# Expose port (default 8080, can be overridden)
-EXPOSE 8080
-
 # Run the service
 CMD ["/app/service"]

@@ -1,4 +1,18 @@
-.PHONY: help build run test clean sqlc migrate docker-up docker-down docker-logs docker-build
+.PHONY: help build run test clean sqlc migrate docker-up docker-down docker-logs docker-build init-dirs
+
+# Detect OS and set shell accordingly
+ifeq ($(OS),Windows_NT)
+SHELL := cmd.exe
+.SHELLFLAGS := /c
+endif
+
+# Initialize directories
+init-dirs:
+ifeq ($(OS),Windows_NT)
+	@if not exist bin mkdir bin
+else
+	@mkdir -p bin
+endif
 
 # Default target
 help:
@@ -29,21 +43,21 @@ help:
 	@echo "  make tidy           - Run go mod tidy"
 
 # Build commands
-build: build-gateway build-svedprint build-admin build-print
+build: init-dirs build-gateway build-svedprint build-admin build-print
 
-build-gateway:
+build-gateway: init-dirs
 	@echo "Building gateway service..."
 	@go build -o bin/gateway ./cmd/gateway
 
-build-svedprint:
+build-svedprint: init-dirs
 	@echo "Building svedprint service..."
 	@go build -o bin/svedprint ./cmd/svedprint
 
-build-admin:
+build-admin: init-dirs
 	@echo "Building admin service..."
 	@go build -o bin/svedprint-admin ./cmd/svedprint-admin
 
-build-print:
+build-print: init-dirs
 	@echo "Building print service..."
 	@go build -o bin/svedprint-print ./cmd/svedprint-print
 
@@ -83,8 +97,14 @@ sqlc:
 # Clean
 clean:
 	@echo "Cleaning build artifacts..."
+ifeq ($(OS),Windows_NT)
+	@if exist bin rmdir /s /q bin
+	@if exist coverage.out del /q coverage.out
+	@if exist coverage.html del /q coverage.html
+else
 	@rm -rf bin/
 	@rm -f coverage.out coverage.html
+endif
 	@echo "Clean complete"
 
 # Docker commands
@@ -115,6 +135,12 @@ docker-ps:
 # Development setup
 dev-setup:
 	@echo "Setting up development environment..."
+ifeq ($(OS),Windows_NT)
+	@if not exist .env (copy .env.example .env && echo Created .env file from .env.example && echo Please edit .env and set required variables) else (echo .env file already exists)
+	@echo Checking for required tools...
+	@where sqlc >nul 2>&1 || echo Warning: sqlc not found. Install with: go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
+	@where migrate >nul 2>&1 || echo Warning: migrate not found. Install with: go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+else
 	@if [ ! -f .env ]; then \
 		cp .env.example .env; \
 		echo "Created .env file from .env.example"; \
@@ -123,8 +149,9 @@ dev-setup:
 		echo ".env file already exists"; \
 	fi
 	@echo "Checking for required tools..."
-	@which sqlc > /dev/null || echo "Warning: sqlc not found. Install with: go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest"
-	@which migrate > /dev/null || echo "Warning: migrate not found. Install with: go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest"
+	@which sqlc > /dev/null 2>&1 || echo "Warning: sqlc not found. Install with: go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest"
+	@which migrate > /dev/null 2>&1 || echo "Warning: migrate not found. Install with: go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest"
+endif
 	@echo "Setup complete"
 
 tidy:
