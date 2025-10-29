@@ -24,7 +24,8 @@
       "Bash(docker exec:*)",
       "Bash(docker ps:*)",
       "WebSearch",
-      "WebFetch(domain:docs.railway.com)"
+      "WebFetch(domain:docs.railway.com)",
+      "Bash(railway status:*)"
     ],
     "deny": [],
     "ask": []

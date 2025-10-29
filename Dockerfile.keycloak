@@ -16,6 +16,11 @@ FROM quay.io/keycloak/keycloak:23.0
 # Copy the built artifacts from builder stage
 COPY --from=builder /opt/keycloak/ /opt/keycloak/
 
+# Resource limits: restrict JVM memory usage
+# Initial heap: 256MB, Max heap: 512MB
+# This reduces idle memory consumption significantly
+ENV JAVA_OPTS_APPEND="-Xms256m -Xmx512m -XX:MetaspaceSize=96m -XX:MaxMetaspaceSize=256m"
+
 # Set the entrypoint
 ENTRYPOINT ["/opt/keycloak/bin/kc.sh"]
 
