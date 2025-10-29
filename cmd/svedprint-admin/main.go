@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	log.Print("Initializing Svedprint service...")
+	log.Print("Initializing Svedprint Admin service...")
 	server := svedprintadmin.NewServer()
 	server.Run()
 }

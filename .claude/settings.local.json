@@ -22,7 +22,9 @@
       "Bash(docker-compose up:*)",
       "Bash(docker logs:*)",
       "Bash(docker exec:*)",
-      "Bash(docker ps:*)"
+      "Bash(docker ps:*)",
+      "WebSearch",
+      "WebFetch(domain:docs.railway.com)"
     ],
     "deny": [],
     "ask": []
