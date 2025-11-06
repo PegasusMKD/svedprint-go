@@ -46,7 +46,7 @@ func (lw *LogWriter) worker() {
 	ticker := time.NewTicker(5 * time.Second)
 	defer ticker.Stop()
 
-	batch := make([]sqlc.RequestLog, 0, 100)
+	batch := make([]sqlc.RequestLog, 100)
 
 	for {
 		select {
@@ -60,12 +60,12 @@ func (lw *LogWriter) worker() {
 
 			if len(batch) >= 100 {
 				lw.service.CreateLogs(batch)
-				batch = make([]sqlc.RequestLog, 0, 100)
+				batch = make([]sqlc.RequestLog, 100)
 			}
 		case <-ticker.C:
 			if len(batch) > 0 {
 				lw.service.CreateLogs(batch)
-				batch = make([]sqlc.RequestLog, 0, 100)
+				batch = make([]sqlc.RequestLog, 100)
 			}
 		}
 	}
