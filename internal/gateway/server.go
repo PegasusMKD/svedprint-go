@@ -2,9 +2,11 @@ package gateway
 
 import (
 	"fmt"
+	"net/http/httputil"
 	"os"
 
 	"github.com/PegasusMKD/svedprint-go/internal/gateway/db/sqlc"
+	requestlogger "github.com/PegasusMKD/svedprint-go/internal/gateway/request_logger"
 	"github.com/PegasusMKD/svedprint-go/pkg/config"
 	"github.com/PegasusMKD/svedprint-go/pkg/database"
 	"github.com/gin-gonic/gin"
@@ -13,6 +15,10 @@ import (
 type GinServer struct {
 	addr   string
 	engine *gin.Engine
+
+	requestLogWriter *requestlogger.LogWriter
+
+	proxies map[string]*httputil.ReverseProxy
 }
 
 func (gs *GinServer) Run() {
@@ -38,7 +44,10 @@ func NewServer() *GinServer {
 	setupMiddleware(router)
 	setupRoutes(router)
 
-	return &GinServer{engine: router, addr: addr}
+	server := &GinServer{engine: router, addr: addr, proxies: make(map[string]*httputil.ReverseProxy)}
+	server.setupProxyAndAuth()
+
+	return server
 }
 
 func setupSqlc(cfg *config.Config) *sqlc.Queries {
@@ -46,6 +55,13 @@ func setupSqlc(cfg *config.Config) *sqlc.Queries {
 	migrationPath := fmt.Sprintf("db/%s/migrations", cfg.ServiceName)
 	database.RunMigrations(dbConfig.URL, migrationPath)
 	return sqlc.New(database.SetupDatabasePool(dbConfig))
+}
+
+func (gs *GinServer) setupProxyAndAuth() {
+	configureProxies(gs)
+	gs.engine.Any("/api/svedprint/*path", gs.ProxyTo("svedprint"))
+	gs.engine.Any("/api/admin/*path", gs.ProxyTo("admin"))
+	gs.engine.Any("/api/print/*path", gs.ProxyTo("print"))
 }
 
 func setupMiddleware(router *gin.Engine) {

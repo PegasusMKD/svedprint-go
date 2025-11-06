@@ -15,7 +15,7 @@ type RequestLog struct {
 	IncomingPath    string
 	RedirectedPath  pgtype.Text
 	UserID          pgtype.Text
-	Realm           pgtype.Text
+	OrganizationID  pgtype.Text
 	StatusCode      int32
 	ResponseTimeMs  int32
 	UpstreamService pgtype.Text

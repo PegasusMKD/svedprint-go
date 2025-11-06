@@ -17,7 +17,7 @@ type BatchInsertRequestLogsParams struct {
 	IncomingPath    string
 	RedirectedPath  pgtype.Text
 	UserID          pgtype.Text
-	Realm           pgtype.Text
+	OrganizationID  pgtype.Text
 	StatusCode      int32
 	ResponseTimeMs  int32
 	UpstreamService pgtype.Text
@@ -25,7 +25,7 @@ type BatchInsertRequestLogsParams struct {
 }
 
 const getRecentErrorLogs = `-- name: GetRecentErrorLogs :many
-select id, timestamp, method, incoming_path, redirected_path, user_id, realm, status_code, response_time_ms, upstream_service, error_message, created_at from request_logs
+select id, timestamp, method, incoming_path, redirected_path, user_id, organization_id, status_code, response_time_ms, upstream_service, error_message, created_at from request_logs
 where status_code >= 400
 order by timestamp desc
 limit $1
@@ -47,7 +47,7 @@ func (q *Queries) GetRecentErrorLogs(ctx context.Context, limitCount int32) ([]R
 			&i.IncomingPath,
 			&i.RedirectedPath,
 			&i.UserID,
-			&i.Realm,
+			&i.OrganizationID,
 			&i.StatusCode,
 			&i.ResponseTimeMs,
 			&i.UpstreamService,
@@ -65,7 +65,7 @@ func (q *Queries) GetRecentErrorLogs(ctx context.Context, limitCount int32) ([]R
 }
 
 const getRequestLogsByService = `-- name: GetRequestLogsByService :many
-select id, timestamp, method, incoming_path, redirected_path, user_id, realm, status_code, response_time_ms, upstream_service, error_message, created_at from request_logs
+select id, timestamp, method, incoming_path, redirected_path, user_id, organization_id, status_code, response_time_ms, upstream_service, error_message, created_at from request_logs
 where upstream_service = $1
 order by timestamp desc
 limit $2
@@ -92,7 +92,7 @@ func (q *Queries) GetRequestLogsByService(ctx context.Context, arg GetRequestLog
 			&i.IncomingPath,
 			&i.RedirectedPath,
 			&i.UserID,
-			&i.Realm,
+			&i.OrganizationID,
 			&i.StatusCode,
 			&i.ResponseTimeMs,
 			&i.UpstreamService,
@@ -110,7 +110,7 @@ func (q *Queries) GetRequestLogsByService(ctx context.Context, arg GetRequestLog
 }
 
 const getRequestLogsByTimeRange = `-- name: GetRequestLogsByTimeRange :many
-select id, timestamp, method, incoming_path, redirected_path, user_id, realm, status_code, response_time_ms, upstream_service, error_message, created_at from request_logs
+select id, timestamp, method, incoming_path, redirected_path, user_id, organization_id, status_code, response_time_ms, upstream_service, error_message, created_at from request_logs
 where timestamp between $1 and $2
 order by timestamp desc
 `
@@ -136,7 +136,7 @@ func (q *Queries) GetRequestLogsByTimeRange(ctx context.Context, arg GetRequestL
 			&i.IncomingPath,
 			&i.RedirectedPath,
 			&i.UserID,
-			&i.Realm,
+			&i.OrganizationID,
 			&i.StatusCode,
 			&i.ResponseTimeMs,
 			&i.UpstreamService,
@@ -154,7 +154,7 @@ func (q *Queries) GetRequestLogsByTimeRange(ctx context.Context, arg GetRequestL
 }
 
 const getRequestLogsByUser = `-- name: GetRequestLogsByUser :many
-select id, timestamp, method, incoming_path, redirected_path, user_id, realm, status_code, response_time_ms, upstream_service, error_message, created_at from request_logs
+select id, timestamp, method, incoming_path, redirected_path, user_id, organization_id, status_code, response_time_ms, upstream_service, error_message, created_at from request_logs
 where user_id = $1
 order by timestamp desc
 limit $2
@@ -181,7 +181,7 @@ func (q *Queries) GetRequestLogsByUser(ctx context.Context, arg GetRequestLogsBy
 			&i.IncomingPath,
 			&i.RedirectedPath,
 			&i.UserID,
-			&i.Realm,
+			&i.OrganizationID,
 			&i.StatusCode,
 			&i.ResponseTimeMs,
 			&i.UpstreamService,
@@ -205,7 +205,7 @@ insert into request_logs (
     incoming_path,
     redirected_path,
     user_id,
-    realm,
+    organization_id,
     status_code,
     response_time_ms,
     upstream_service,
@@ -230,7 +230,7 @@ type InsertRequestLogParams struct {
 	IncomingPath    string
 	RedirectedPath  pgtype.Text
 	UserID          pgtype.Text
-	Realm           pgtype.Text
+	OrganizationID  pgtype.Text
 	StatusCode      int32
 	ResponseTimeMs  int32
 	UpstreamService pgtype.Text
@@ -244,7 +244,7 @@ func (q *Queries) InsertRequestLog(ctx context.Context, arg InsertRequestLogPara
 		arg.IncomingPath,
 		arg.RedirectedPath,
 		arg.UserID,
-		arg.Realm,
+		arg.OrganizationID,
 		arg.StatusCode,
 		arg.ResponseTimeMs,
 		arg.UpstreamService,

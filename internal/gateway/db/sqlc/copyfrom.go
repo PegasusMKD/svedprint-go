@@ -34,7 +34,7 @@ func (r iteratorForBatchInsertRequestLogs) Values() ([]interface{}, error) {
 		r.rows[0].IncomingPath,
 		r.rows[0].RedirectedPath,
 		r.rows[0].UserID,
-		r.rows[0].Realm,
+		r.rows[0].OrganizationID,
 		r.rows[0].StatusCode,
 		r.rows[0].ResponseTimeMs,
 		r.rows[0].UpstreamService,
@@ -47,5 +47,5 @@ func (r iteratorForBatchInsertRequestLogs) Err() error {
 }
 
 func (q *Queries) BatchInsertRequestLogs(ctx context.Context, arg []BatchInsertRequestLogsParams) (int64, error) {
-	return q.db.CopyFrom(ctx, []string{"request_logs"}, []string{"timestamp", "method", "incoming_path", "redirected_path", "user_id", "realm", "status_code", "response_time_ms", "upstream_service", "error_message"}, &iteratorForBatchInsertRequestLogs{rows: arg})
+	return q.db.CopyFrom(ctx, []string{"request_logs"}, []string{"timestamp", "method", "incoming_path", "redirected_path", "user_id", "organization_id", "status_code", "response_time_ms", "upstream_service", "error_message"}, &iteratorForBatchInsertRequestLogs{rows: arg})
 }
