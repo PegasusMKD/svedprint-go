@@ -6,12 +6,16 @@ import (
 	"time"
 
 	"github.com/PegasusMKD/svedprint-go/internal/gateway/db/sqlc"
-	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type RequestLogRepository struct {
-	db      *pgxpool.Pool
 	queries *sqlc.Queries
+}
+
+func NewRequestLogRepository(queries *sqlc.Queries) *RequestLogRepository {
+	return &RequestLogRepository{
+		queries: queries,
+	}
 }
 
 func (repository *RequestLogRepository) GetLogs() {

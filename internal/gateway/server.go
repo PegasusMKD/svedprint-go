@@ -2,6 +2,7 @@ package gateway
 
 import (
 	"fmt"
+	"log"
 	"net/http/httputil"
 	"os"
 
@@ -37,7 +38,9 @@ func NewServer() *GinServer {
 		panic("Failed loading config for gateway!")
 	}
 
-	setupSqlc(cfg)
+	queries := setupSqlc(cfg)
+	requestLoggerRepository := requestlogger.NewRequestLogRepository(queries)
+	requestLoggerService := requestlogger.NewRequestLogService(requestLoggerRepository)
 
 	router := gin.Default()
 
@@ -45,7 +48,7 @@ func NewServer() *GinServer {
 	setupRoutes(router)
 
 	server := &GinServer{engine: router, addr: addr, proxies: make(map[string]*httputil.ReverseProxy)}
-	server.setupProxyAndAuth()
+	server.setupProxyAndAuth(requestLoggerService)
 
 	return server
 }
@@ -57,8 +60,17 @@ func setupSqlc(cfg *config.Config) *sqlc.Queries {
 	return sqlc.New(database.SetupDatabasePool(dbConfig))
 }
 
-func (gs *GinServer) setupProxyAndAuth() {
+func (gs *GinServer) Shutdown() {
+	log.Println("Shutting down log writer...")
+	gs.requestLogWriter.Stop()
+	log.Println("Log writer stopped")
+}
+
+func (gs *GinServer) setupProxyAndAuth(service *requestlogger.RequestLogService) {
+	gs.requestLogWriter = requestlogger.NewLogWriter(service)
+
 	configureProxies(gs)
+
 	gs.engine.Any("/api/svedprint/*path", gs.ProxyTo("svedprint"))
 	gs.engine.Any("/api/admin/*path", gs.ProxyTo("admin"))
 	gs.engine.Any("/api/print/*path", gs.ProxyTo("print"))

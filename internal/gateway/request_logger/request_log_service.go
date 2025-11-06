@@ -6,6 +6,12 @@ type RequestLogService struct {
 	repository *RequestLogRepository
 }
 
+func NewRequestLogService(repository *RequestLogRepository) *RequestLogService {
+	return &RequestLogService{
+		repository: repository,
+	}
+}
+
 func (service *RequestLogService) CreateLogs(logs []sqlc.RequestLog) {
 	data := make([]sqlc.BatchInsertRequestLogsParams, 100)
 
