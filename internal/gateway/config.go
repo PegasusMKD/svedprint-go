@@ -52,6 +52,8 @@ func (gs *GinServer) ProxyTo(groupName string) gin.HandlerFunc {
 			statusCode:     200,
 		}
 		c.Writer = wrappedWriter
+		strippedPath := c.Param("path")
+		c.Request.URL.Path = strippedPath
 
 		proxy.ServeHTTP(c.Writer, c.Request)
 
