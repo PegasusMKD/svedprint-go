@@ -22,12 +22,6 @@ type Config struct {
 	RedisDB       int
 	RedisTTL      time.Duration
 
-	KeycloakURL          string
-	KeycloakRealm        string
-	KeycloakClientID     string
-	KeycloakClientSecret string
-	KeycloakJWKSURL      string
-
 	SvedprintServiceURL      string
 	SvedprintAdminServiceURL string
 	SvedprintPrintServiceURL string
@@ -51,12 +45,6 @@ func Load(serviceName string) (*Config, error) {
 		RedisPassword: getEnv("REDIS_PASSWORD", ""),
 		RedisDB:       getEnvInt("REDIS_DB", 0),
 		RedisTTL:      getEnvDuration("REDIS_TTL", 10*time.Minute),
-
-		KeycloakURL:          getEnv("KEYCLOAK_URL", "http://localhost:8080"),
-		KeycloakRealm:        getEnv("KEYCLOAK_REALM", "svedprint"),
-		KeycloakClientID:     getEnv("KEYCLOAK_CLIENT_ID", "svedprint-backend"),
-		KeycloakClientSecret: getEnv("KEYCLOAK_CLIENT_SECRET", ""),
-		KeycloakJWKSURL:      getEnv("KEYCLOAK_JWKS_URL", ""),
 
 		SvedprintServiceURL:      getEnv("SVEDPRINT_SERVICE_URL", "http://svedprint:8001"),
 		SvedprintAdminServiceURL: getEnv("SVEDPRINT_ADMIN_SERVICE_URL", "http://svedprint-admin:8002"),
@@ -83,9 +71,6 @@ func (c *Config) validate() error {
 	case "gateway":
 		if c.DatabaseURL == "" {
 			return fmt.Errorf("DATABASE_URL is required for gateway service")
-		}
-		if c.KeycloakJWKSURL == "" {
-			return fmt.Errorf("KEYCLOAK_JWKS_URL is required for gateway service")
 		}
 	case "svedprint", "svedprint-admin":
 		if c.DatabaseURL == "" {
