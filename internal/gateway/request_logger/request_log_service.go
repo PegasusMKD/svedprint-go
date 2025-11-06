@@ -22,7 +22,7 @@ func NewRequestLogService(repository *RequestLogRepository) *RequestLogService {
 
 func (service *RequestLogService) CreateLogs(logs []sqlc.RequestLog) {
 	data := make([]sqlc.BatchInsertRequestLogsParams, 100)
-	service.logger.Println(fmt.Sprintf("Received this data %v", data))
+	service.logger.Println(fmt.Sprintf("Received this data %v", logs))
 
 	for idx, log := range logs {
 		data[idx] = sqlc.BatchInsertRequestLogsParams{
