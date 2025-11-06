@@ -1,8 +1,6 @@
 package requestlogger
 
 import (
-	"fmt"
-
 	"github.com/PegasusMKD/svedprint-go/internal/gateway/db/sqlc"
 	"github.com/PegasusMKD/svedprint-go/pkg/logger"
 	"github.com/rs/zerolog"
@@ -22,7 +20,6 @@ func NewRequestLogService(repository *RequestLogRepository) *RequestLogService {
 
 func (service *RequestLogService) CreateLogs(logs []sqlc.RequestLog) {
 	data := make([]sqlc.BatchInsertRequestLogsParams, len(logs))
-	service.logger.Println(fmt.Sprintf("Received this data %v", logs))
 
 	for idx, log := range logs {
 		data[idx] = sqlc.BatchInsertRequestLogsParams{
@@ -38,8 +35,6 @@ func (service *RequestLogService) CreateLogs(logs []sqlc.RequestLog) {
 			ErrorMessage:    log.ErrorMessage,
 		}
 	}
-
-	service.logger.Println(fmt.Sprintf("Attempting to save %v", data))
 
 	service.repository.InsertBatch(data)
 }

@@ -2,19 +2,22 @@ package requestlogger
 
 import (
 	"context"
-	"log"
 	"time"
 
 	"github.com/PegasusMKD/svedprint-go/internal/gateway/db/sqlc"
+	"github.com/PegasusMKD/svedprint-go/pkg/logger"
+	"github.com/rs/zerolog"
 )
 
 type RequestLogRepository struct {
 	queries *sqlc.Queries
+	logger  *zerolog.Logger
 }
 
 func NewRequestLogRepository(queries *sqlc.Queries) *RequestLogRepository {
 	return &RequestLogRepository{
 		queries: queries,
+		logger:  logger.Get(),
 	}
 }
 
@@ -27,10 +30,10 @@ func (repository *RequestLogRepository) InsertBatch(logs []sqlc.BatchInsertReque
 
 	_, err := repository.queries.BatchInsertRequestLogs(ctx, logs)
 	if err != nil {
-		log.Printf("ERROR: Failed writing log batch due to '%v'", err)
+		repository.logger.Printf("ERROR: Failed writing log batch due to '%v'", err)
 		return
 	}
 
-	log.Printf("Successfully wrote %d log entries to the database.", len(logs))
+	repository.logger.Printf("Successfully wrote %d log entries to the database.", len(logs))
 
 }
