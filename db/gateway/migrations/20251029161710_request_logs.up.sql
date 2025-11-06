@@ -5,7 +5,7 @@ create table if not exists request_logs (
     incoming_path text not null,
     redirected_path text,
     user_id text,
-    organization_id text,
+    realm text,
     status_code int not null,
     response_time_ms int not null,
     upstream_service text,
