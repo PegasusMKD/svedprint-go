@@ -17,11 +17,16 @@ func (service *RequestLogService) CreateLogs(logs []sqlc.RequestLog) {
 
 	for idx, log := range logs {
 		data[idx] = sqlc.BatchInsertRequestLogsParams{
-			Timestamp:      log.Timestamp,
-			Method:         log.Method,
-			IncomingPath:   log.IncomingPath,
-			RedirectedPath: log.RedirectedPath,
-			// TODO: ....
+			Timestamp:       log.Timestamp,
+			Method:          log.Method,
+			IncomingPath:    log.IncomingPath,
+			RedirectedPath:  log.RedirectedPath,
+			OrganizationID:  log.OrganizationID,
+			UserID:          log.UserID,
+			StatusCode:      log.StatusCode,
+			ResponseTimeMs:  log.ResponseTimeMs,
+			UpstreamService: log.UpstreamService,
+			ErrorMessage:    log.ErrorMessage,
 		}
 	}
 

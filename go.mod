@@ -6,7 +6,6 @@ require (
 	github.com/gin-gonic/gin v1.11.0
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/golang-migrate/migrate/v4 v4.18.1
-	github.com/jackc/pgx v3.6.2+incompatible
 	github.com/jackc/pgx/v5 v5.7.6
 	github.com/redis/go-redis/v9 v9.7.0
 	github.com/rs/zerolog v1.33.0
@@ -39,7 +38,6 @@ require (
 	github.com/modern-go/concurrent v0.0.0-20180228061459-e0a39a4cb421 // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/pelletier/go-toml/v2 v2.2.4 // indirect
-	github.com/pkg/errors v0.9.1 // indirect
 	github.com/quic-go/qpack v0.5.1 // indirect
 	github.com/quic-go/quic-go v0.54.0 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
