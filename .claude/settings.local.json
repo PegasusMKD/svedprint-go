@@ -27,7 +27,8 @@
       "WebFetch(domain:docs.railway.com)",
       "Bash(railway status:*)",
       "WebFetch(domain:pkg.go.dev)",
-      "WebFetch(domain:clerk.com)"
+      "WebFetch(domain:clerk.com)",
+      "Bash(curl:*)"
     ],
     "deny": [],
     "ask": []

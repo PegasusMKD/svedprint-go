@@ -13,14 +13,14 @@ type RegistrationHandler struct {
 }
 
 type RegistrationDto struct {
-	username string
-	password string
+	Username string `json:"username"`
+	Password string `json:"password"`
 
-	firstName  string
-	middleName *string
-	lastName   string
+	FirstName  string  `json:"first_name"`
+	MiddleName *string `json:"middle_name"`
+	LastName   string  `json:"last_name"`
 
-	schoolUuid string
+	SchoolUuid string `json:"school_uuid"`
 }
 
 func NewRegistrationHandler(service *services.TeacherService) *RegistrationHandler {
@@ -39,12 +39,12 @@ func (handler *RegistrationHandler) RegisterUser(ctx *gin.Context) {
 
 	teacher, err := handler.service.CreateTeacher(
 		ctx.Request.Context(),
-		dto.username,
-		dto.password,
-		dto.schoolUuid,
-		dto.firstName,
-		dto.middleName,
-		dto.lastName,
+		dto.Username,
+		dto.Password,
+		dto.SchoolUuid,
+		dto.FirstName,
+		dto.MiddleName,
+		dto.LastName,
 	)
 
 	if err != nil {
