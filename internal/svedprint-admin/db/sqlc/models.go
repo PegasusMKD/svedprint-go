@@ -308,7 +308,6 @@ type Teacher struct {
 	FirstName    string
 	MiddleName   pgtype.Text
 	LastName     string
-	Username     string
-	Password     string
 	PrintAllowed bool
+	ClerkID      string
 }

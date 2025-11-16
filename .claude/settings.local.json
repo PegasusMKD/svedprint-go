@@ -25,7 +25,9 @@
       "Bash(docker ps:*)",
       "WebSearch",
       "WebFetch(domain:docs.railway.com)",
-      "Bash(railway status:*)"
+      "Bash(railway status:*)",
+      "WebFetch(domain:pkg.go.dev)",
+      "WebFetch(domain:clerk.com)"
     ],
     "deny": [],
     "ask": []

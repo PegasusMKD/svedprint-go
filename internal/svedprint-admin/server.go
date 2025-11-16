@@ -2,11 +2,17 @@ package svedprintadmin
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/PegasusMKD/svedprint-go/internal/svedprint-admin/db/sqlc"
+	"github.com/PegasusMKD/svedprint-go/internal/svedprint-admin/handlers"
+	"github.com/PegasusMKD/svedprint-go/internal/svedprint-admin/repositories"
+	"github.com/PegasusMKD/svedprint-go/internal/svedprint-admin/services"
 	"github.com/PegasusMKD/svedprint-go/pkg/config"
 	"github.com/PegasusMKD/svedprint-go/pkg/database"
+	"github.com/clerk/clerk-sdk-go/v2"
+	"github.com/clerk/clerk-sdk-go/v2/user"
 	"github.com/gin-gonic/gin"
 )
 
@@ -31,12 +37,12 @@ func NewServer() *GinServer {
 		panic("Failed loading config for svedprint!")
 	}
 
-	setupSqlc(cfg)
+	queries := setupSqlc(cfg)
 
 	router := gin.Default()
 
 	setupMiddleware(router)
-	setupRoutes(router)
+	setupRoutes(router, queries)
 
 	return &GinServer{engine: router, addr: addr}
 }
@@ -48,12 +54,30 @@ func setupSqlc(cfg *config.Config) *sqlc.Queries {
 	return sqlc.New(database.SetupDatabasePool(dbConfig))
 }
 
+func configureClerkUserClient() *user.Client {
+	clerkConfig := &clerk.ClientConfig{}
+	clerkSecretKey := os.Getenv("CLERK_SECRET_KEY")
+	if clerkSecretKey == "" {
+		log.Fatal("CLERK_SECRET_KEY is required")
+	}
+	clerkConfig.Key = &clerkSecretKey
+	return user.NewClient(clerkConfig)
+}
+
 func setupMiddleware(router *gin.Engine) {
 	router.Use(gin.Logger())
 }
 
-func setupRoutes(router *gin.Engine) {
+func setupRoutes(router *gin.Engine, queries *sqlc.Queries) {
 	router.GET("/health", func(ctx *gin.Context) {
 		ctx.JSON(200, gin.H{"status": "healthy"})
 	})
+
+	clerkUserClient := configureClerkUserClient()
+
+	teacherRepository := repositories.NewTeacherRepository(queries)
+	teacherService := services.NewTeacherService(teacherRepository, clerkUserClient)
+	registrationHandler := handlers.NewRegistrationHandler(teacherService)
+
+	router.POST("/register", registrationHandler.RegisterUser)
 }
