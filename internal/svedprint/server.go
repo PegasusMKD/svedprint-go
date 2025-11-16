@@ -2,6 +2,7 @@ package svedprint
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/PegasusMKD/svedprint-go/internal/svedprint/db/sqlc"
@@ -44,7 +45,9 @@ func NewServer() *GinServer {
 func setupSqlc(cfg *config.Config) *sqlc.Queries {
 	dbConfig := database.GetConfig(cfg.DatabaseURL, cfg.DatabaseMaxConns, cfg.DatabaseMaxIdleConns, cfg.DatabaseConnLifetime)
 	migrationPath := fmt.Sprintf("db/%s/migrations", cfg.ServiceName)
-	database.RunMigrations(dbConfig.URL, migrationPath)
+	if err := database.RunMigrations(dbConfig.URL, migrationPath); err != nil {
+		log.Fatalf("Failed to run migrations: %v", err)
+	}
 	return sqlc.New(database.SetupDatabasePool(dbConfig))
 }
 

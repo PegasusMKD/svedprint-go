@@ -15,13 +15,14 @@ create table school (
 );
 
 create table academic_year (
+	uuid uuid primary key default gen_random_uuid(),
 	school_uuid uuid not null references school (uuid),
 	year_range text not null,
 	school_type school_type not null,
 	last_digits_of_year text not null,
 	act_number text,
 	act_date date,
-	primary key (school_uuid, school_type, year_range)
+	unique (school_uuid, school_type, year_range)
 );
 
 create table school_diploma_details (
