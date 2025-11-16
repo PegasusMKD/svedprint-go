@@ -32,7 +32,7 @@ func NewServer() *GinServer {
 	}
 	addr := fmt.Sprintf(":%s", port)
 
-	cfg, err := config.Load("svedprint")
+	cfg, err := config.Load("svedprint-admin")
 	if err != nil {
 		panic("Failed loading config for svedprint!")
 	}
