@@ -53,9 +53,12 @@ func (service *TeacherService) CreateTeacher(ctx context.Context, username strin
 
 	teacher, err := service.repository.CreateTeacher(ctx, schoolUuid, firstName, middleName, lastName, clerkUser.ID)
 	if err != nil {
+		// TODO: Add a "revert" aka delete user from Clerk if persistance fails
 		service.logger.Printf("Failed saving teacher details for Clerk ID '%s'.", clerkUser.ID)
 		return nil, err
 	}
+
+	// TODO: After save, push the latest version to Redis, so on Login we can just look it up from there? (is this even worth saving, since we are waiting on Clerk anyway)
 
 	return &TeacherDto{
 		Uuid:     teacher.Uuid.String(),
