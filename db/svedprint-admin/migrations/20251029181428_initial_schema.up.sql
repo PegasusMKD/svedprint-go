@@ -39,7 +39,7 @@ create table school_testimony_details (
 
 
 create table teacher (
-	uuid uuid primary key,
+	uuid uuid primary key default gen_random_uuid(),
 	school_uuid uuid not null references school (uuid),
 	
 	first_name text not null,
