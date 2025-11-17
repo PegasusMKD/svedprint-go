@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/PegasusMKD/svedprint-go/internal/svedprint-admin/db/sqlc"
 	"github.com/PegasusMKD/svedprint-go/internal/svedprint-admin/repositories"
 	"github.com/PegasusMKD/svedprint-go/pkg/logger"
 	"github.com/clerk/clerk-sdk-go/v2/user"
