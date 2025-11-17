@@ -18,6 +18,7 @@ type TeacherService struct {
 }
 
 type TeacherDto struct {
+	Uuid     string `json:"uuid"`
 	Username string `json:"username"`
 
 	FirstName  string  `json:"first_name"`
@@ -57,6 +58,7 @@ func (service *TeacherService) CreateTeacher(ctx context.Context, username strin
 	}
 
 	return &TeacherDto{
+		Uuid:     teacher.Uuid.String(),
 		Username: username,
 
 		FirstName:  teacher.FirstName,
