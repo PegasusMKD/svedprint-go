@@ -18,6 +18,16 @@ type TeacherService struct {
 	logger     *zerolog.Logger
 }
 
+type TeacherDto struct {
+	Username string `json:"username"`
+
+	FirstName  string  `json:"first_name"`
+	MiddleName *string `json:"middle_name"`
+	LastName   string  `json:"last_name"`
+
+	SchoolUuid string `json:"school_uuid"`
+}
+
 func NewTeacherService(repository *repositories.TeacherRepository, userClient *user.Client) *TeacherService {
 	return &TeacherService{
 		repository: repository,
@@ -26,7 +36,7 @@ func NewTeacherService(repository *repositories.TeacherRepository, userClient *u
 	}
 }
 
-func (service *TeacherService) CreateTeacher(ctx context.Context, username string, password string, schoolUuid string, firstName string, middleName *string, lastName string) (*sqlc.Teacher, error) {
+func (service *TeacherService) CreateTeacher(ctx context.Context, username string, password string, schoolUuid string, firstName string, middleName *string, lastName string) (*TeacherDto, error) {
 	metadata := json.RawMessage(fmt.Sprintf(`{"role": "teacher", "school_uuid": "%s", "print_allowed": true}`, schoolUuid))
 	clerkUser, err := service.userClient.Create(ctx, &user.CreateParams{
 		Username:       &username,
@@ -47,5 +57,13 @@ func (service *TeacherService) CreateTeacher(ctx context.Context, username strin
 		return nil, err
 	}
 
-	return teacher, nil
+	return &TeacherDto{
+		Username: username,
+
+		FirstName:  teacher.FirstName,
+		MiddleName: &teacher.MiddleName.String,
+		LastName:   teacher.LastName,
+
+		SchoolUuid: teacher.SchoolUuid.String(),
+	}, nil
 }

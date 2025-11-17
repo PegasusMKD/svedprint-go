@@ -53,9 +53,9 @@ func (handler *RegistrationHandler) RegisterUser(ctx *gin.Context) {
 		if apiErr, ok := err.(*clerk.APIErrorResponse); ok {
 			// Return the Clerk error with its original status code and structure
 			ctx.JSON(apiErr.HTTPStatusCode, gin.H{
-				"errors":          apiErr.Errors,
-				"status":          apiErr.HTTPStatusCode,
-				"clerk_trace_id":  apiErr.TraceID,
+				"errors":         apiErr.Errors,
+				"status":         apiErr.HTTPStatusCode,
+				"clerk_trace_id": apiErr.TraceID,
 			})
 			return
 		}
