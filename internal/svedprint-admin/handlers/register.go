@@ -3,6 +3,7 @@ package handlers
 import (
 	"github.com/PegasusMKD/svedprint-go/internal/svedprint-admin/services"
 	"github.com/PegasusMKD/svedprint-go/pkg/logger"
+	"github.com/clerk/clerk-sdk-go/v2"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 )
@@ -48,6 +49,18 @@ func (handler *RegistrationHandler) RegisterUser(ctx *gin.Context) {
 	)
 
 	if err != nil {
+		// Check if this is a Clerk API error
+		if apiErr, ok := err.(*clerk.APIErrorResponse); ok {
+			// Return the Clerk error with its original status code and structure
+			ctx.JSON(apiErr.HTTPStatusCode, gin.H{
+				"errors":          apiErr.Errors,
+				"status":          apiErr.HTTPStatusCode,
+				"clerk_trace_id":  apiErr.TraceID,
+			})
+			return
+		}
+
+		// For non-Clerk errors, return generic 500
 		ctx.JSON(500, gin.H{"error": err.Error()})
 		return
 	}
